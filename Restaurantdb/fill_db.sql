@@ -1,0 +1,54 @@
+INSERT INTO Ingridients VALUES (0, 'Картофель', 20000);
+INSERT INTO Ingridients VALUES (1, 'Помидор', 4000);
+INSERT INTO Ingridients VALUES (2, 'Креветки', 2000);
+INSERT INTO Ingridients VALUES (3, 'Капуста', 3000);
+INSERT INTO Ingridients VALUES (4, 'Сухарики', 1000);
+INSERT INTO Ingridients VALUES (5, 'Морковь', 6000);
+INSERT INTO Ingridients VALUES (6, 'Свекла', 4000);
+INSERT INTO Ingridients VALUES (7, 'Говядина', 7000);
+INSERT INTO Ingridients VALUES (8, 'Лук', 3000);
+INSERT INTO Ingridients VALUES (9, 'Курица', 5000);
+INSERT INTO Ingridients VALUES (10, 'Грибы', 3000);
+INSERT INTO Ingridients VALUES (11, 'Огурцы', 6000);
+INSERT INTO Ingridients VALUES (12, 'Сыр', 4000);
+INSERT INTO Ingridients VALUES (13, 'Колбаса', 7000);
+INSERT INTO Ingridients VALUES (14, 'Яйцо', 4000);
+INSERT INTO Ingridients VALUES (15, 'Тесто', 8000);
+
+INSERT INTO Dishes VALUES (0, 'Салат Цезарь', 300, 270, 120);
+INSERT INTO Dishes VALUES (1, 'Борщ', 400, 220, 170);
+INSERT INTO Dishes VALUES (2, 'Шашлык из говядины', 450, 360, 250);
+INSERT INTO Dishes VALUES (3, 'Пицца КСП', 300, 220, 150);
+INSERT INTO Dishes VALUES (4, 'Солянка', 400, 220, 170);
+
+INSERT INTO Composition VALUES (0, 1, 20);
+INSERT INTO Composition VALUES (0, 2, 40);
+INSERT INTO Composition VALUES (0, 3, 40);
+INSERT INTO Composition VALUES (0, 4, 20);
+INSERT INTO Composition VALUES (1, 0, 50);
+INSERT INTO Composition VALUES (1, 3, 30);
+INSERT INTO Composition VALUES (1, 5, 20);
+INSERT INTO Composition VALUES (1, 6, 30);
+INSERT INTO Composition VALUES (1, 7, 40);
+INSERT INTO Composition VALUES (2, 1, 80);
+INSERT INTO Composition VALUES (2, 7, 150);
+INSERT INTO Composition VALUES (2, 8, 20);
+INSERT INTO Composition VALUES (3, 1, 20);
+INSERT INTO Composition VALUES (3, 11, 20);
+INSERT INTO Composition VALUES (3, 12, 20);
+INSERT INTO Composition VALUES (3, 13, 30);
+INSERT INTO Composition VALUES (3, 14, 10);
+INSERT INTO Composition VALUES (3, 15, 50);
+INSERT INTO Composition VALUES (4, 0, 40);
+INSERT INTO Composition VALUES (4, 3, 30);
+INSERT INTO Composition VALUES (4, 5, 10);
+INSERT INTO Composition VALUES (4, 7, 40);
+INSERT INTO Composition VALUES (4, 8, 10);
+INSERT INTO Composition VALUES (4, 9, 20);
+INSERT INTO Composition VALUES (4, 11, 20);
+
+INSERT INTO Clients VALUES (0, 'Ilya', 'Gridasov', 18);
+INSERT INTO Clients VALUES (1, 'Roma', 'Niconov', 18);
+
+INSERT INTO Marks VALUES (0, 0, 0, 8, 'Very good');
+INSERT INTO Marks VALUES (1, 1, 2, 7, 'Not bad');
