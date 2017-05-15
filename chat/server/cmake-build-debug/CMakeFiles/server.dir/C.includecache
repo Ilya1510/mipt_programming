@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ilya/2_semestr/repos/lab_2/server/main.c
+stdio.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+unistd.h
+-
+pthread.h
+-
+string.h
+-
+stdlib.h
+-
+getopt.h
+-
+unistd.h
+-
+workWithMessages.h
+/home/ilya/2_semestr/repos/lab_2/server/workWithMessages.h
+
+/home/ilya/2_semestr/repos/lab_2/server/workWithMessages.h
+sys/time.h
+-
+
