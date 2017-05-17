@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/Paints.dir/main.cpp.o  -o Paints 

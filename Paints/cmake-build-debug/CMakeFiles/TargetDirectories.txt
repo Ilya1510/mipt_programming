@@ -1,0 +1,3 @@
+/home/ilya/CLionProjects/Paints/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ilya/CLionProjects/Paints/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ilya/CLionProjects/Paints/cmake-build-debug/CMakeFiles/Paints.dir
