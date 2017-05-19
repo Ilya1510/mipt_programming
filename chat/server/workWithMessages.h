@@ -69,6 +69,32 @@ size_t readIntFromChars(char *str) {
     return res;
 }
 
+ssize_t fullRecv(int sock, char* buffer, size_t count) {
+    size_t bytesRead = 0;
+    while (bytesRead != count) {
+        ssize_t cntRead = recv(sock, buffer + bytesRead, count - bytesRead, 0);
+        if (cntRead <= 0) {
+            return cntRead;
+        }
+        bytesRead += cntRead;
+    }
+    return count;
+}
+
+ssize_t recvCommand(int sock, char* buffer) {
+    ssize_t status = 0;
+    if ((status = fullRecv(sock, buffer, 5)) <= 0) {
+        return status;
+    }
+    size_t countBytes = readIntFromStr(buffer + 1);
+    if (countBytes == 0)
+        return 5;
+    if ((status = fullRecv(sock, buffer + 5, countBytes)) <= 0) {
+        return status;
+    }
+    return countBytes + 5;
+}
+
 size_t getCountStringsMessage(char *mess) {
     size_t bytesCount = readIntFromStr(mess + 1);
     mess += 5;
@@ -143,9 +169,7 @@ void createNotificationMessage(char* buffer, size_t ind, char* login, char* even
     char idToStr[SMALL_BUFF];
     writeIntToChars(idToStr, ind);
     char str[SMALL_BUFF]; str[0] = 0;
-    strcat(str, "User with id: ");
-    strcat(str, idToStr);
-    strcat(str, " and login: ");
+    strcat(str, "User with login: ");
     strcat(str, login);
     strcat(str, event);
     strcat(str, "chat!");
@@ -199,8 +223,14 @@ void printString(char *str, size_t len) {
 size_t min(size_t a, size_t b) {
     return a < b ? a : b;
 }
+
 int max(int a, int b) {
     return a > b ? a : b;
+}
+
+void printTime(time_t sec) {
+    struct tm* timeInfo = localtime(&sec);
+    printf("%d:%d%d ", timeInfo->tm_hour, (timeInfo->tm_min) / 10, timeInfo->tm_min % 10);
 }
 
 #endif //SERVER_WORKWITHMESSAGES_H

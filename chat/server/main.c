@@ -6,7 +6,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <unistd.h>
 #include "workWithMessages.h"
 
 int PORT = 1337;
@@ -116,34 +115,21 @@ void addMessageToHistory(char *mess) {
 
 //this function get userId
 int login(char *msg, int *userId, int sock, int threadInd) {
-    printf("111\n");
     char login[NAME_LEN];
     char password[NAME_LEN];
 
     if (msg[0] == 'i') {
-        printf("222\n");
         if (getCountStringsMessage(msg) == 2) {
-            printf("333\n");
             size_t lenLogin = getLenOfStringByIndex(msg, 0);
-            printf("444\n");
             size_t lenPassword = getLenOfStringByIndex(msg, 1);
-            printf("555\n");
             if (lenLogin < 2 || lenPassword < 2 || lenLogin > 31 || lenPassword > 31) {
                 sendStatusMessage(sock, 3);
                 return -3;
             }
-            printf("777\n");
             strncpy(login, getStringByIndex(msg, 0), lenLogin);
-            printf("888\n");
             strncpy(password, getStringByIndex(msg, 1), lenPassword);
-            printf("999\n");
-            printf("%ld %ld\n", lenLogin, lenPassword);
             login[lenLogin] = 0;
             password[lenPassword] = 0;
-            printString(login, lenLogin);
-            printf("\n");
-            printString(password, lenPassword);
-            printf("\n");
             int ind;
             int isNew = 1;
             if ((ind = addUser(sock, login, password, threadInd, &isNew)) >= 0) {
@@ -153,7 +139,6 @@ int login(char *msg, int *userId, int sock, int threadInd) {
                     createNotificationLoginMessage(buffer, (size_t) clientsData[ind].userInd, login);
                     sendMessageToActiveUsers(buffer);
                 }
-                printf("666\n");
                 *userId = ind;
                 return ind;
             } else {
@@ -207,8 +192,8 @@ void processListMessage(size_t userId) {
     char *login = clientsData[userId].login;
     char buffer[BUFF_SIZE];
     char names[MAX_CONNECTIONS][NAME_LEN];
-    char tmp[NAME_LEN];
     int countDiffUsers = 0;
+    char tmp[NAME_LEN];
     setTypeMessage(buffer, 'l');
     createEmptyMessage(buffer);
     pthread_mutex_lock(&data_mutex);
@@ -225,6 +210,7 @@ void processListMessage(size_t userId) {
             addStringToMessage(buffer, tmp, 4);
             addStringToMessage(buffer, clientsData[i].login,
                     strlen(clientsData[i].login));
+            strcpy(names[countDiffUsers++], clientsData[i].login);
         }
     }
     pthread_mutex_unlock(&data_mutex);
@@ -242,7 +228,6 @@ void processHistoryMessage(char* mess, size_t userId) {
         return;
     }
     size_t count = readIntFromStr(getStringByIndex(mess, 0));
-    printf("h count: %ld\n", count);
     count = min(count, MAX_HISTORY_SEND);
     int firstMess = max(messagesInHistoryCount - (int)count, 0);
     char buffer[BUFF_SIZE];
@@ -261,7 +246,6 @@ void processHistoryMessage(char* mess, size_t userId) {
         if (cntSending != allLen) {
             fprintf(stderr, "! Error can't send history to %s\n", clientsData[userId].login);
         }
-        usleep(1);
     }
     pthread_mutex_unlock(&data_mutex);
 }
@@ -363,9 +347,8 @@ void* processClient(void * data) {
 
     while (1) {
         pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-        ssize_t count = recv(sockId, buffer, BUFF_SIZE, 0);
+        ssize_t count = recvCommand(sockId, buffer);
         pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
-        printf("count: %ld\n", count);
         if (count <= 0) {
             if (userId != USER_ID_UNDEFINED) {
                 if (getCountActiveUsersFromUserInd(clientsData[userId].userInd) == 1) {
@@ -381,10 +364,7 @@ void* processClient(void * data) {
             close(sockId);
             return NULL;
         } else {
-            printf("***\n");
-            printf("c: %c\n", buffer[0]);
             processMessage(buffer, &userId, sockId, threadInd);
-            printf("333\n");
         }
     }
     close(sockId);
@@ -394,7 +374,6 @@ void* processClient(void * data) {
 int main(int argc, char** argv) {
     int opt;
     while ((opt = getopt(argc, argv, "p:")) != -1) {
-        printf("%c\n", (char)opt);
         switch ((char)opt) {
             case 'p':
                 PORT = atoi(optarg);
@@ -458,7 +437,7 @@ int main(int argc, char** argv) {
             fprintf(stderr, "create thread error; return code from pthread_create() is %d\n", rc);
         }
         pthread_mutex_unlock(&data_mutex);
-        printf("someone with sockId:%d and connected\n", status);
+        printf("someone with sockId:%d\n", status);
 
     }
     //close(sockId);

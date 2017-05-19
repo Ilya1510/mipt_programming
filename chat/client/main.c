@@ -73,8 +73,8 @@ void doLogin(int sockId) {
 void processMessageM(char* mess) {
     char* timeStr = getStringByIndex(mess, 0);
     size_t sec = readIntFromStr(timeStr);
-    size_t mic = readIntFromStr(timeStr + 4);
-    printf("sec:%ld mic:%ld\n", sec, mic);
+    //size_t mic = readIntFromStr(timeStr + 4);
+    printTime(sec);
     printString(getStringByIndex(mess, 1), getLenOfStringByIndex(mess, 1));
     printf("\n");
 }
@@ -90,10 +90,10 @@ void processMessageHistory(char* mess) {
     printf("Кол-во сообщений: %ld\n", messCount);
     for (size_t i = 0; i < messCount; ++i) {
         char *timestamp = getStringByIndex(mess, 3 * i);
-        printf("time:");
+        printf("time-");
         size_t sec = readIntFromStr(timestamp);
-        size_t mic = readIntFromStr(timestamp + 4);
-        printf("%ld %ld ", sec, mic);
+        //size_t mic = readIntFromStr(timestamp + 4);
+        printTime(sec);
         char *login = getStringByIndex(mess, 3 * i + 1);
         char *body = getStringByIndex(mess, 3 * i + 2);
         printString(login, getLenOfStringByIndex(mess, 3 * i + 1));
@@ -119,9 +119,9 @@ void processMessageList(char* mess) {
 
 void processMessageRegular(char * mess) {
     char *timeStr = getStringByIndex(mess, 0);
-    size_t sec = readIntFromStr(timeStr);
-    size_t mic = readIntFromStr(timeStr + 4);
-    printf("time in server: %ld %ld ", sec, mic);
+    time_t sec = readIntFromStr(timeStr);
+    //size_t mic = readIntFromStr(timeStr + 4);
+    printTime(sec);
     printf("from user: %s ", getStringByIndex(mess, 1));
     printf("message: "); printString(getStringByIndex(mess, 2),
                                      getLenOfStringByIndex(mess, 2));
@@ -132,10 +132,11 @@ void* listenFromServer(void * data) {
     int serverSock = *(int*)data;
     char buffer[BUFF_SIZE];
     while (1) {
-        ssize_t count = recv(serverSock, buffer, BUFF_SIZE, 0);
-        if (count == 0) {
+        ssize_t count = recvCommand(serverSock, buffer);
+        if (count <= 0) {
             fprintf(stderr, "Прервано соединение с сервером\n");
             close(serverSock);
+            _exit(-1);
             return NULL;
         }
         if (buffer[0] == 's') {
@@ -185,18 +186,21 @@ void sendQueryKick(int sock, size_t id, char *reason) {
 }
 
 void processCommand(int sock, char *line) {
+    char buff[100];
     if (!strcmp(line, "/list")) {
-        send(sock, "l", 1, 0);
+        createEmptyMessage(buff);
+        setTypeMessage(buff, 'l');
+        send(sock, buff, 5, 0);
         return;
     } else if (!strcmp(line, "/logout")) {
-        send(sock, "o", 1, 0);
+        createEmptyMessage(buff);
+        setTypeMessage(buff, 'o');
+        send(sock, buff, 5, 0);
         return;
     } else if (!strcmp(line, "/login")) {
         doLogin(sock);
         return;
-    } else if (!strcmp(line, "/list")) {
-        send(sock, "l", 1, 0);
-    } else if (!strncmp(line, "/history", 8)) {
+    }  else if (!strncmp(line, "/history", 8)) {
         size_t count = readIntFromChars(line + 8);
         sendQueryHistory(sock, count);
         return;
@@ -218,8 +222,13 @@ void processCommand(int sock, char *line) {
 
 int main(int argc, char** argv) {
     int opt;
-    while ((opt = getopt(argc, argv, "p:")) != -1) {
+    char ipAddr[20];
+    strcpy(ipAddr, "127.0.0.1");
+    while ((opt = getopt(argc, argv, "i:p:")) != -1) {
         switch (opt) {
+            case 'i':
+                strcpy(ipAddr, optarg);
+                break;
             case 'p':
                 PORT = atoi(optarg);
                 break;
@@ -235,14 +244,14 @@ int main(int argc, char** argv) {
     struct sockaddr_in port;
     port.sin_family = AF_INET;
     port.sin_port = htons((uint16_t)PORT);
-    port.sin_addr.s_addr = inet_addr("127.0.0.1");
+    port.sin_addr.s_addr = inet_addr(ipAddr);
     if (connect(clientSock, (struct sockaddr *) &port, sizeof(port)) < 0) {
         fprintf(stderr, "Connect to server failed\n");
         return 2;
     }
     printf("Теперь вы можете писать и получать сообщения\n");
     printf("Возможные команды: /login /logout /history /list /kick\n");
-    int rc = pthread_create(&pthreadRecv, NULL, listenFromServer, (void *)&clientSock);
+    pthread_create(&pthreadRecv, NULL, listenFromServer, (void *)&clientSock);
     ssize_t read;
     size_t len = 0;
     char* line = NULL;
