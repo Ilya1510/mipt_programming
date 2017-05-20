@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/tuple.dir/main.cpp.o  -o tuple 
