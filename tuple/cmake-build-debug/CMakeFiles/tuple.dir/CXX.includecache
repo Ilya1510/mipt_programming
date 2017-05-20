@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ilya/CLionProjects/tuple/main.cpp
+iostream
+-
+tuple
+-
+functional
+-
+tuple.h
+/home/ilya/CLionProjects/tuple/tuple.h
+assert.h
+-
+vector
+-
+algorithm
+-
+
+/home/ilya/CLionProjects/tuple/tuple.h
+iostream
+-
+
