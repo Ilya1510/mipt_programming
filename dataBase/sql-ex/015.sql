@@ -1,0 +1,4 @@
+SELECT hd FROM PC
+GROUP BY hd
+HAVING COUNT(model)>1
+
