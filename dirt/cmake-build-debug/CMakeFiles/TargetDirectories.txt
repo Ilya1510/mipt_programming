@@ -1,0 +1,3 @@
+/home/ilya/CLionProjects/dirt/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ilya/CLionProjects/dirt/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ilya/CLionProjects/dirt/cmake-build-debug/CMakeFiles/dirt.dir

@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/ConnectedGraphs.dir/main.cpp.o  -o ConnectedGraphs 

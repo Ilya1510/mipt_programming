@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/dirt.dir/main.cpp.o  -o dirt 
