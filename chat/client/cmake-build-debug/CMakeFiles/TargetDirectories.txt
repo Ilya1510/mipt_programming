@@ -1,3 +1,0 @@
-/home/ilya/2_semestr/repos/lab_2/client/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/ilya/2_semestr/repos/lab_2/client/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/ilya/2_semestr/repos/lab_2/client/cmake-build-debug/CMakeFiles/client.dir
