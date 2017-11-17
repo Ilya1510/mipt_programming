@@ -1,0 +1,8 @@
+void processPointFinish(Segment key, CartesianTree& openSegments,
+                        vector<Segment>& waitingClose, vector<double> verticalSegmentsY) {
+    openSegments.erase(key);
+    if (key.getB().getX() == key.getA().getX()) { //vertical segment
+        waitingClose.push_back(key);
+        verticalSegmentsY.push_back(key.getA().getY());
+    }
+}

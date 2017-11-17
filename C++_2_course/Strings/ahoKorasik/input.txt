@@ -1,0 +1,16 @@
+7
+2 2 a 4 b
+2 3 a 6 b
+0
+1 5 b
+1 7 b
+0
+0
+7
+b
+bbbb
+b
+bb
+bbb
+bb
+bbb
