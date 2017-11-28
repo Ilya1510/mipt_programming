@@ -1,7 +1,5 @@
 #include <iostream>
-#include <cmath>
 #include <algorithm>
-#include <vector>
 #include <assert.h>
 
 using namespace std;
@@ -75,11 +73,11 @@ public:
 };
 
 struct Gamer {
-    virtual bool doMove(Field& filed, char player) const = 0;
+    virtual bool doMove(Field& filed, char player) = 0;
     static bool isCellExist(int x, int y) {
         return x >= 0 && y >= 0 && x < Field::N && y < Field::N;
     }
-    bool canDoThisMove(Field& field, int x, int y, char player) const {
+    static bool canDoThisMove(Field& field, int x, int y, char player) {
         if (!isCellExist(x, y) || field.get(x, y) != Field::EMPTY) {
             return false;
         }
@@ -100,7 +98,7 @@ struct Gamer {
         }
         return false;
     }
-    vector<pair<int, int> > doThisMove(Field& field, int x, int y, char player) const {
+    static vector<pair<int, int> > doThisMove(Field& field, int x, int y, char player) {
         assert(isCellExist(x, y) && field.get(x, y) == Field::EMPTY);
         int dx[] = {-1, 0, 1, 1, 1, 0, -1, -1};
         int dy[] = {1, 1, 1, 0, -1, -1, -1, 0};
@@ -131,7 +129,7 @@ struct Gamer {
         return changed;
     }
 
-    void retChanges(Field& field, vector<pair<int, int> >& changed) const {
+    static void retChanges(Field& field, vector<pair<int, int> >& changed) {
         for (auto &x : changed) {
             field.set(x.first, x.second, Field::getOtherPlayer(field.get(x.first, x.second)));
         }
@@ -166,7 +164,7 @@ struct Gamer1 : public Gamer {
                 if (canDoThisMove(field, i, j, player)) {
                     auto changed = doThisMove(field, i, j, player);
                     Situation next = dfs(field, Field::getOtherPlayer(player), d + 1);
-                    if (d % 2 == 0 ^ player == Field::BLACK) {
+                    if (player == Field::BLACK) {
                         if (next.black > best.black) {
                             best = next;
                             best.bestX = i;
@@ -189,18 +187,62 @@ struct Gamer1 : public Gamer {
         return best;
     }
 
+    pair <int, int> lastMove;
+
     //! Сделай "лучший" ход для данного игрока
-    bool doMove(Field& field, char player) const {
+    bool doMove(Field& field, char player) {
         Situation move = dfs(field, player, 0);
         if (canDoThisMove(field, move.bestX, move.bestY, player)) {
             doThisMove(field, move.bestX, move.bestY, player);
+            lastMove.first = move.bestX;
+            lastMove.second = move.bestY;
             return true;
         }
         return false;
     }
+
+    pair<int, int> getLastMove() const {
+        return lastMove;
+    }
 };
 
 int main() {
+    string s;
+    getline(cin, s);
+    char player = (s[5] == 'b' ? Field::BLACK : Field::WHITE);
+    Field field;
+    Gamer1 gamer1;
+    while (getline(cin, s)) {
+        if (s == "turn") {
+            bool ok = gamer1.doMove(field, player);
+            if (ok) {
+                int x = gamer1.getLastMove().first;
+                int y = gamer1.getLastMove().second;
+                string query = "move ";
+                query.push_back(char(y + 'a'));
+                query += " ";
+                query.push_back(char(x + '1'));
+                cout << query << endl;
+            }
+        } else if (s == "bad") {
+            cout << "bad move" << endl;
+            return 1;
+        } else if (s[0] == 'm') {
+            int y = s[5] - 'a';
+            int x = s[7] - '1';
+            Gamer::doThisMove(field, x, y, Field::getOtherPlayer(player));
+        } else {
+            cout << "game over" << endl;
+            cout << s << endl;
+            field.print();
+            return 0;
+        }
+        field.print();
+    }
+}
+
+/*
+void Gamer1VSGamer1() {
     Field field;
     Gamer1 gamer1;
     field.print();
@@ -221,5 +263,6 @@ int main() {
     gamer1.doMove(field, player);
     player = Field::getOtherPlayer(player);
     gamer1.doMove(field, player);
-    return 0;
 }
+*/
+
